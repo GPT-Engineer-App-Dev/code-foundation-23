@@ -28,18 +28,20 @@ const fromSupabase = async (query) => {
 | type       | text        | string | true     |
 | started_at | timestamptz | string | true     |
 | ended_at   | timestamptz | string | true     |
-| distance   | bigint      | number | true     |
+| distance   | int8        | number | true     |
+
+### users
+
+| name       | type        | format | required |
+|------------|-------------|--------|----------|
+| id         | uuid        | string | true     |
+| created_at | timestamptz | string | true     |
 
 */
 
-export const useActivities = () => useQuery({
-    queryKey: ['activities'],
+export const useActivity = () => useQuery({
+    queryKey: ['activity'],
     queryFn: () => fromSupabase(supabase.from('activity').select('*')),
-});
-
-export const useActivity = (id) => useQuery({
-    queryKey: ['activity', id],
-    queryFn: () => fromSupabase(supabase.from('activity').select('*').eq('id', id).single()),
 });
 
 export const useAddActivity = () => {
@@ -47,7 +49,7 @@ export const useAddActivity = () => {
     return useMutation({
         mutationFn: (newActivity) => fromSupabase(supabase.from('activity').insert([newActivity])),
         onSuccess: () => {
-            queryClient.invalidateQueries('activities');
+            queryClient.invalidateQueries('activity');
         },
     });
 };
@@ -57,8 +59,7 @@ export const useUpdateActivity = () => {
     return useMutation({
         mutationFn: (updatedActivity) => fromSupabase(supabase.from('activity').update(updatedActivity).eq('id', updatedActivity.id)),
         onSuccess: () => {
-            queryClient.invalidateQueries('activities');
-            queryClient.invalidateQueries(['activity', updatedActivity.id]);
+            queryClient.invalidateQueries('activity');
         },
     });
 };
@@ -68,7 +69,42 @@ export const useDeleteActivity = () => {
     return useMutation({
         mutationFn: (id) => fromSupabase(supabase.from('activity').delete().eq('id', id)),
         onSuccess: () => {
-            queryClient.invalidateQueries('activities');
+            queryClient.invalidateQueries('activity');
+        },
+    });
+};
+
+export const useUsers = () => useQuery({
+    queryKey: ['users'],
+    queryFn: () => fromSupabase(supabase.from('users').select('*')),
+});
+
+export const useAddUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newUser) => fromSupabase(supabase.from('users').insert([newUser])),
+        onSuccess: () => {
+            queryClient.invalidateQueries('users');
+        },
+    });
+};
+
+export const useUpdateUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (updatedUser) => fromSupabase(supabase.from('users').update(updatedUser).eq('id', updatedUser.id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('users');
+        },
+    });
+};
+
+export const useDeleteUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id) => fromSupabase(supabase.from('users').delete().eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('users');
         },
     });
 };
