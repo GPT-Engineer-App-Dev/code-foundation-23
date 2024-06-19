@@ -13,10 +13,7 @@ export function SupabaseProvider({ children }) {
 
 const fromSupabase = async (query) => {
     const { data, error } = await query;
-    if (error) {
-        console.error(error);
-        throw new Error(error.message);
-    }
+    if (error) throw new Error(error.message);
     return data;
 };
 
@@ -31,7 +28,7 @@ const fromSupabase = async (query) => {
 | type       | text        | string | true     |
 | started_at | timestamptz | string | true     |
 | ended_at   | timestamptz | string | true     |
-| distance   | int8        | number | true     |
+| distance   | bigint      | number | true     |
 
 */
 
